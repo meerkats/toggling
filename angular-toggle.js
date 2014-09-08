@@ -35,10 +35,17 @@ toggle.directive('toggle', ['toggleService', function (toggleService) {
         restrict: 'A',
         link: function ($scope, element, attr) {
             var toggle = attr.ngToggle || attr.toggle;
+            var toggle_class = attr.ngToggleClass || attr.toggleClass || 'ng-toggle--active';
             element.bind('click', function () {
                 $scope.$apply(function () {
                     toggleService.toggle(toggle);
                 });
+            });
+            $scope.$watch(function () { return toggleService.isActive(toggle); }, function (is_active) {
+                if (typeof is_active === "undefined") {
+                    return;
+                }
+                element.toggleClass(toggle_class, is_active);
             });
         }
     };
