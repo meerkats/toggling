@@ -1,0 +1,21 @@
+{
+  "name": "angular-toggle",
+  "version": "0.1.0",
+  "authors": [
+    "Meerkats <develop@meerkats.com.au>"
+  ],
+  "description": "Toggle element state on user interaction.",
+  "main": "angular-toggle.js",
+  "keywords": [
+    "angular",
+    "rwd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
