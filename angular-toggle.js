@@ -1,13 +1,23 @@
-var toggle = angular.module('toggle', []);
+angular.module('toggle', [])
+
+/**
+ * @ngdoc controller
+ * @name toggle.controller:ToggleGroupController
+ * @description
+ * Groups toggles for consistent behaviour.
+ */
+.controller('ToggleGroupController', ['$scope', function ($scope) {
+    $scope.always_on = false;
+}])
 
 /**
  * @ngdoc service
- * @name toggle.service:toggleService
+ * @name toggle.service:ToggleService
  * @description
  * Service maintains the current state of a `key` across
  * all toggle related directives.
  */
-toggle.service('toggleService', [function () {
+.service('ToggleService', [function () {
     var visibility = {};
     return {
         toggle: function (key, override) {
@@ -18,7 +28,25 @@ toggle.service('toggleService', [function () {
             return visibility[key || '_'];
         }
     };
-}]);
+}])
+
+/**
+ * @ngdoc directive
+ * @name toggle.directive:toggleAlwaysOn
+ * @restrict A
+ *
+ * @description
+ * Ensures a specific group can never be deactivated.
+ */
+.directive('toggleAlwaysOn', [function () {
+    return {
+        restrict: 'A',
+        controller: 'ToggleGroupController',
+        link: function (scope, element, attr) {
+            scope.always_on = true;
+        }
+    };
+}])
 
 /**
  * @ngdoc directive
@@ -30,18 +58,22 @@ toggle.service('toggleService', [function () {
  *
  * @param {string=} `key` to toggle on interaction
  */
-toggle.directive('toggle', ['toggleService', function (toggleService) {
+.directive('toggle', ['ToggleService', function (ToggleService) {
     return {
         restrict: 'A',
-        link: function ($scope, element, attr) {
+        controller: 'ToggleGroupController',
+        link: function (scope, element, attr) {
             var toggle = attr.ngToggle || attr.toggle;
             var toggle_class = attr.ngToggleClass || attr.toggleClass || 'ng-toggle--active';
             element.bind('click', function () {
-                $scope.$apply(function () {
-                    toggleService.toggle(toggle);
+                scope.$apply(function () {
+                    if (scope.always_on && ToggleService.isActive(toggle)) {
+                        return;
+                    }
+                    ToggleService.toggle(toggle);
                 });
             });
-            $scope.$watch(function () { return toggleService.isActive(toggle); }, function (is_active) {
+            scope.$watch(function () { return ToggleService.isActive(toggle); }, function (is_active) {
                 if (typeof is_active === "undefined") {
                     return;
                 }
@@ -49,7 +81,7 @@ toggle.directive('toggle', ['toggleService', function (toggleService) {
             });
         }
     };
-}]);
+}])
 
 /**
  * @ngdoc directive
@@ -61,11 +93,12 @@ toggle.directive('toggle', ['toggleService', function (toggleService) {
  *
  * @param {string=} `key` to toggle on interaction
  */
-toggle.directive('toggleOn', ['toggleService', function (toggleService) {
+.directive('toggleOn', ['ToggleService', function (ToggleService) {
     var groups = {};
     return {
         restrict: 'A',
-        link: function ($scope, element, attr) {
+        controller: 'ToggleGroupController',
+        link: function (scope, element, attr) {
             var toggle = attr.ngToggleOn || attr.toggleOn;
             var group = attr.ngToggleGroup || attr.toggleGroup;
             var toggle_class = attr.ngToggleClass || attr.toggleClass || 'ng-toggle--active';
@@ -74,19 +107,22 @@ toggle.directive('toggleOn', ['toggleService', function (toggleService) {
                 groups[group] = null;
                 element.addClass('ng-toggle-group--' + group);
             }
-            $scope.$watch(function () { return toggleService.isActive(toggle); }, function (is_active) {
+            scope.$watch(function () { return ToggleService.isActive(toggle); }, function (is_active) {
                 if (typeof is_active === "undefined") {
                     return;
                 }
+                if (group && groups[group] === toggle && scope.always_on) {
+                    return;
+                }
                 if (is_active === true  && groups[group] !== toggle) {
-                    toggleService.toggle(groups[group], false);
+                    ToggleService.toggle(groups[group], false);
                     groups[group] = toggle;
                 }
                 element.toggleClass(toggle_class, is_active);
             });
         }
     };
-}]);
+}])
 
 /**
  * @ngdoc directive
@@ -96,12 +132,13 @@ toggle.directive('toggleOn', ['toggleService', function (toggleService) {
  * @description
  * Sets default toggle state to active.
  */
-toggle.directive('toggleActive', ['toggleService', function (toggleService) {
+.directive('toggleActive', ['ToggleService', function (ToggleService) {
     return {
         restrict: 'A',
-        link: function ($scope, element, attr) {
+        controller: 'ToggleGroupController',
+        link: function (scope, element, attr) {
             var toggle = attr.ngToggleOn || attr.toggleOn;
-            toggleService.toggle(toggle, true);
+            ToggleService.toggle(toggle, true);
         }
     };
 }]);
