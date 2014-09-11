@@ -8,6 +8,7 @@ angular.module('toggle', [])
  */
 .controller('ToggleGroupController', ['$scope', function ($scope) {
     $scope.always_on = false;
+    $scope.active_class = 'ng-toggle--active';
 }])
 
 /**
@@ -50,6 +51,24 @@ angular.module('toggle', [])
 
 /**
  * @ngdoc directive
+ * @name toggle.directive:toggleClass
+ * @restrict A
+ *
+ * @description
+ * Overrides `ng-toggle--active` with a custom class.
+ */
+.directive('toggleClass', [function () {
+    return {
+        restrict: 'A',
+        controller: 'ToggleGroupController',
+        link: function (scope, element, attr) {
+            scope.active_class = attr.ngToggleClass || attr.toggleClass;
+        }
+    };
+}])
+
+/**
+ * @ngdoc directive
  * @name toggle.directive:toggle
  * @restrict A
  *
@@ -64,7 +83,8 @@ angular.module('toggle', [])
         controller: 'ToggleGroupController',
         link: function (scope, element, attr) {
             var toggle = attr.ngToggle || attr.toggle;
-            var toggle_class = attr.ngToggleClass || attr.toggleClass || 'ng-toggle--active';
+            var toggle_class = attr.ngToggleClass || attr.toggleClass;
+            console.log(toggle_class);
             element.bind('click', function () {
                 scope.$apply(function () {
                     if (scope.always_on && ToggleService.isActive(toggle)) {
@@ -77,7 +97,7 @@ angular.module('toggle', [])
                 if (typeof is_active === "undefined") {
                     return;
                 }
-                element.toggleClass(toggle_class, is_active);
+                element.toggleClass(toggle_class || scope.active_class, is_active);
             });
         }
     };
@@ -101,7 +121,7 @@ angular.module('toggle', [])
         link: function (scope, element, attr) {
             var toggle = attr.ngToggleOn || attr.toggleOn;
             var group = attr.ngToggleGroup || attr.toggleGroup;
-            var toggle_class = attr.ngToggleClass || attr.toggleClass || 'ng-toggle--active';
+            var toggle_class = attr.ngToggleClass || attr.toggleClass;
             element.addClass('ng-toggle');
             if (group && typeof groups[group] === "undefined") {
                 groups[group] = null;
@@ -118,7 +138,7 @@ angular.module('toggle', [])
                     ToggleService.toggle(groups[group], false);
                     groups[group] = toggle;
                 }
-                element.toggleClass(toggle_class, is_active);
+                element.toggleClass(toggle_class || scope.active_class, is_active);
             });
         }
     };
