@@ -1,13 +1,13 @@
-# angular-toggle
+# Toggling
 
 A set of directives to manage element state toggling through user interactions. Generalized from the need for hamburger navigation toggle on mobile.
 
 ## Usage
 
-Include `angular-toggle` module inside your application
+Include `toggling` module inside your application
 
 ```javascript
-var app = angular.module('app', ['angular-toggle']);
+var app = angular.module('app', ['toggling']);
 ```
 
 then add required directive markup
