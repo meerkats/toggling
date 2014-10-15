@@ -1,4 +1,4 @@
-angular.module('toggle', [])
+angular.module('toggling', [])
 
 /**
  * @ngdoc controller

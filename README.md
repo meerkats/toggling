@@ -1,4 +1,4 @@
-# angular-toggle
+# Toggling
 
 A set of directives to manage element state toggling through user interactions. Generalized from the need for hamburger navigation toggle on mobile.
 
