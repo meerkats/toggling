@@ -85,7 +85,9 @@ angular.module('toggling', [])
             var toggle = attr.ngToggle || attr.toggle;
             var toggle_class = attr.ngToggleClass || attr.toggleClass;
             element.bind('click', function (e) {
-                e.preventDefault();
+                if (attr.preventDefault === 'true') {
+                    e.preventDefault();
+                }
                 scope.$apply(function () {
                     if (scope.always_on && ToggleService.isActive(toggle)) {
                         return;
