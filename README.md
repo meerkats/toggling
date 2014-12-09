@@ -33,6 +33,7 @@ This example markup will allow each button to toggle one element, while ensuring
 - `toggle-class` - Customize the `class` element which is used (default: `ng-toggle--active`)
 - `toggle-active` - Set toggle key active on init (default state is inactive)
 - `toggle-group-always-on` - Ensure that one toggle is always active
+- `toggle-prevent-default` - Prevent the default action of the toggle trigger
 
 ## To do
 
