@@ -85,7 +85,7 @@ angular.module('toggling', [])
             var toggle = attr.ngToggle || attr.toggle;
             var toggle_class = attr.ngToggleClass || attr.toggleClass;
             element.bind('click', function (e) {
-                if (attr.preventDefault) {
+                if (attr.togglePreventDefault) {
                     e.preventDefault();
                 }
                 scope.$apply(function () {
