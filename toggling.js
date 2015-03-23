@@ -25,13 +25,14 @@ angular.module('toggling', [])
     }
     return {
         toggle: function (key, override) {
-            visibility[key] = setVisibility(key, override);
-            if (key) {
-                $rootScope.$broadcast('toggle', {
-                    key: key,
-                    visible: visibility[key]
-                });
+            if (!key) {
+                return false;
             }
+            visibility[key] = setVisibility(key, override);
+            $rootScope.$broadcast('toggle', {
+                key: key,
+                visible: visibility[key]
+            });
             return visibility[key];
         },
         isActive: function (key) {
@@ -163,16 +164,18 @@ angular.module('toggling', [])
  *
  * @param {string=} `action` to call on interaction
  */
-.directive('toggleOnChange', ['ToggleService', function (ToggleService) {
+.directive('toggleOnChange', [function () {
     return {
         restrict: 'A',
         scope: {
             action: '=toggleOnChange'
         },
         controller: 'ToggleGroupController',
-        link: function (scope, element, attr, controller) {
+        link: function (scope) {
             scope.$on('toggle', function (e, data) {
-                scope.action(data.key, data.visible);
+                if (typeof scope.action === 'function') {
+                    scope.action(data.key, data.visible);
+                }
             });
         }
     };
